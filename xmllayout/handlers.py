@@ -1,8 +1,13 @@
 """logging Handlers"""
 import logging.handlers
+import sys
 
 __all__ = ['RawSocketHandler']
 
+if sys.version_info[0] == 3:
+    PY_VERSION = 3
+else:
+    PY_VERSION = 2
 
 class RawSocketHandler(logging.handlers.SocketHandler):
     """Logging Handler that writes log records to a streaming socket.
@@ -20,7 +25,10 @@ class RawSocketHandler(logging.handlers.SocketHandler):
         """
         try:
             msg = self.format(record)
-            self.send(msg.encode())
+            if PY_VERSION == 2:
+                self.send(msg.encode())
+            else:
+                self.send(msg.encode('utf-8'))
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
