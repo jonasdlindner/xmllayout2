@@ -1,5 +1,8 @@
 """logging Formatters"""
-import cgi
+try:
+    from cgi import escape # < Python3.7
+except ImportError:
+    from html import escape
 import logging
 
 __all__ = ['XMLLayout']
@@ -19,9 +22,9 @@ class XMLLayout(logging.Formatter):
     def format(self, record):
         """Format the log record as XMLLayout XML"""
         levelname = LOG4J_LEVELS.get(record.levelname, record.levelname)
-        event = dict(name=cgi.escape(record.name),
-                     threadName=cgi.escape(record.threadName),
-                     levelname=cgi.escape(levelname),
+        event = dict(name=escape(record.name),
+                     threadName=escape(record.threadName),
+                     levelname=escape(levelname),
                      created=int(record.created * 1000))
 
         event['message'] = LOG4J_MESSAGE % escape_cdata(record.getMessage())
@@ -39,12 +42,12 @@ class XMLLayout(logging.Formatter):
             event['throwable'] = (LOG4J_THROWABLE %
                                   escape_cdata(record.exc_text))
 
-        location_info = dict(pathname=cgi.escape(record.pathname),
+        location_info = dict(pathname=escape(record.pathname),
                              lineno=record.lineno,
-                             module=cgi.escape(record.module), funcName='')
+                             module=escape(record.module), funcName='')
         if hasattr(record, 'funcName'):
             # >= Python 2.5
-            location_info['funcName'] = cgi.escape(record.funcName)
+            location_info['funcName'] = escape(record.funcName)
         event['locationInfo'] = LOG4J_LOCATIONINFO % location_info
 
         return LOG4J_EVENT % event
