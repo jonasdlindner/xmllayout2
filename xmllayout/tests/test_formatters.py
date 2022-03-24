@@ -1,7 +1,7 @@
 import cgi
 import logging
 import sys
-from io import StringIO
+from six import StringIO
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
