@@ -8,6 +8,13 @@ extra = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
+# Just here for Python2   
+# compatibility
+# If not needed:
+# import setuptools
+# if __name__ == "__main__":
+# setuptools.setup()   
+
 setup(name='XMLLayout',
       version=version,
       description="Formats Python log messages as log4j XMLLayout XML",
@@ -54,7 +61,6 @@ localhost port 4448::
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
-      test_suite='nose.collector',
-      tests_require=['nose'],
+      tests_require=['pytest'],
       **extra
       )

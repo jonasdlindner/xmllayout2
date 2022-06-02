@@ -1,14 +1,15 @@
-import cgi
 import logging
 import sys
-from six import StringIO
+try:
+    from six import StringIO # < Python3.10
+except ImportError: 
+    from io import StringIO
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
     import elementtree.ElementTree as ET
 
 from xmllayout import XMLLayout
-from xmllayout.formatters import escape_cdata
 
 PY3 = sys.version_info >= (3,)
 
