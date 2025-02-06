@@ -1,66 +1,43 @@
-import sys
-
+from os import path
 from setuptools import setup, find_packages
+import io
 
-version = '1.1'
+version = '2.0.0'
 
-extra = {}
-if sys.version_info >= (3,):
-    extra['use_2to3'] = True
-
-# Just here for Python2   
+# Just here for Python2
 # compatibility
 # If not needed:
 # import setuptools
 # if __name__ == "__main__":
-# setuptools.setup()   
+# setuptools.setup()
 
-setup(name='XMLLayout',
-      version=version,
-      description="Formats Python log messages as log4j XMLLayout XML",
-      long_description="""\
-XMLLayout provides a Python logging Formatter that formats log messages as XML,
-according to `log4j's XMLLayout specification
-<https://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/XMLLayout.html>`_.
+here = path.abspath(path.dirname(__file__))
+with io.open(path.join(here, 'README.md')) as f:
+    long_description = f.read()
 
-XMLLayout formatted log messages can be viewed and filtered within the
-`Chainsaw <https://logging.apache.org/chainsaw/2.x>`_ application
-(see the example section below), part of the Java based log4j project.
-
-This package also includes a RawSocketHandler -- like
-logging.handler.SocketHandler, but sends the raw log message over the socket
-instead of a pickled version. RawSocketHandler can be configured to send log
-messages to Chainsaw directly over a socket.
-
-For example: to forward log messages to Chainsaw, if it were listening on
-localhost port 4448::
-
-    import logging
-    import xmllayout
-
-    handler = xmllayout.RawSocketHandler('localhost', 4448)
-    handler.setFormatter(xmllayout.XMLLayout())
-    logging.root.addHandler(handler)
-""",
-      classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
-        'Programming Language :: Python :: Implementation :: Jython',
-        'Topic :: System :: Logging'
-        ],
-      keywords='logging log4j',
-      author='Philip Jenvey',
-      author_email='pjenvey@underboss.org',
-      url='http://pypi.python.org/pypi/XMLLayout',
-      license='BSD',
-      packages=find_packages(),
-      include_package_data=True,
-      zip_safe=False,
-      tests_require=['pytest'],
-      **extra
-      )
+setup(
+	name='xmllayout2',
+    version=version,
+    description="Formats Python log messages as log4j XMLLayout XML",
+    long_description=long_description,
+    classifiers=[
+		'Development Status :: 5 - Production/Stable',
+		'Intended Audience :: Developers',
+		'License :: OSI Approved :: BSD License',
+		'Programming Language :: Python',
+		'Programming Language :: Python :: 3',
+		'Programming Language :: Python :: Implementation :: CPython',
+		'Programming Language :: Python :: Implementation :: PyPy',
+		'Programming Language :: Python :: Implementation :: Jython',
+		'Topic :: System :: Logging'
+    ],
+    keywords='logging log4j',
+    author='Jonas Lindner',
+    author_email='jonaslindner55@gmail.com',
+    url='http://pypi.python.org/pypi/XMLLayout',
+    license='BSD',
+    packages=find_packages(),
+    include_package_data=True,
+    zip_safe=False,
+    tests_require=['pytest'],
+)
