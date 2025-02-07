@@ -1,8 +1,8 @@
 """logging Formatters"""
 try:
-    from cgi import escape  # < Python3.7
-except ImportError:
     from html import escape
+except ImportError:
+    from cgi import escape   # < Python3.7
 import logging
 
 __all__ = ['XMLLayout']
