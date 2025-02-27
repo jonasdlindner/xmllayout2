@@ -2,7 +2,7 @@ from os import path
 from setuptools import setup, find_packages
 import io
 
-version = '2.0.1'
+version = '2.0.2'
 
 # Just here for Python2
 # compatibility
