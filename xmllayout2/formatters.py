@@ -4,6 +4,7 @@ try:
 except ImportError:
     from cgi import escape   # < Python3.7
 import logging
+import socket
 
 __all__ = ['XMLLayout']
 
@@ -18,7 +19,6 @@ class XMLLayout(logging.Formatter):
     <http://logging.apache.org/log4j/docs/api/org/apache/log4j/xml/
     XMLLayout.html>_`
     """
-
     def format(self, record):
         """Format the log record as XMLLayout XML"""
         levelname = LOG4J_LEVELS.get(record.levelname, record.levelname)
@@ -29,18 +29,16 @@ class XMLLayout(logging.Formatter):
 
         event['message'] = LOG4J_MESSAGE % escape_cdata(record.getMessage())
 
-        # FIXME: Support an NDC somehow
         event['ndc'] = ''
-        # ndc = self.get_ndc(record)
-        # if ndc:
-        #    event['ndc'] = LOG4J_NDC % escape_cdata(ndc)
+        ndc = getattr(record, 'ndc', None)
+        if ndc:
+            event['ndc'] = LOG4J_NDC % escape_cdata(ndc)
 
         event['throwable'] = ''
         if record.exc_info:
             if not record.exc_text:
                 record.exc_text = self.formatException(record.exc_info)
-            event['throwable'] = (LOG4J_THROWABLE %
-                                  escape_cdata(record.exc_text))
+            event['throwable'] = LOG4J_THROWABLE % escape_cdata(record.exc_text)
 
         location_info = dict(pathname=escape(record.pathname),
                              lineno=record.lineno,
@@ -50,8 +48,10 @@ class XMLLayout(logging.Formatter):
             location_info['funcName'] = escape(record.funcName)
         event['locationInfo'] = LOG4J_LOCATIONINFO % location_info
 
-        return LOG4J_EVENT % event
+        properties = dict(hostname=escape(socket.gethostname()))
+        event['properties'] = LOG4J_PROPERTIES % properties
 
+        return LOG4J_EVENT % event
 
 def escape_cdata(cdata):
     """Escape XML CDATA content"""
@@ -64,9 +64,8 @@ LOG4J_EVENT = """\
     timestamp="%(created)i"
     level="%(levelname)s"
     thread="%(threadName)s">
-%(message)s%(ndc)s%(throwable)s%(locationInfo)s</log4j:event>
+%(message)s%(ndc)s%(throwable)s%(locationInfo)s%(properties)s</log4j:event>
 """
-
 
 # The actual log message
 LOG4J_MESSAGE = """\
@@ -93,4 +92,12 @@ LOG4J_LOCATIONINFO = """\
         method="%(funcName)s"
         file="%(pathname)s"
         line="%(lineno)d"/>
+"""
+
+
+# Additional information
+LOG4J_PROPERTIES = """\
+    <log4j:properties>
+        <log4j:data name="hostname" value="%(hostname)s" />
+    </log4j:properties>
 """
